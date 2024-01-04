@@ -8,5 +8,6 @@ class StatesForm(StatesGroup):
     get_info = State()
     get_bot_settings = State()
     get_credits = State()
+    set_name = State()
 
 

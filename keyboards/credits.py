@@ -27,7 +27,7 @@ credits_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     ],
     [
         InlineKeyboardButton(
-            text='Back',
+            text='◀️ Back',
             callback_data='profile'
         )
     ]

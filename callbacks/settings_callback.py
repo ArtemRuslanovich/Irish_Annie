@@ -8,6 +8,6 @@ from utils.statesform import StatesForm
 async def settings(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StatesForm.get_settings)
     await callback.message.edit_text(
-        f"Settings",
+        f"All you need to craft your own experience.",
         reply_markup=settings_keyboard
     )
