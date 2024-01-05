@@ -18,6 +18,7 @@ from callbacks.profile_callback import profile
 from callbacks.set_gender import set_gender_female, set_gender_male
 from callbacks.settings_callback import settings
 from callbacks.user_name_callback import ask_for_name, process_name_input
+from handlers.ai_message import handle_user_message
 from handlers.start import command_menu_handler, command_start_handler, command_help_handler
 from utils.settings import Settings
 from aiogram import F
@@ -60,6 +61,10 @@ async def start_bot(bot: Bot):
 
     dp.callback_query.register(ask_for_name0, F.data.startswith('continue_name'))
     dp.message.register(process_name_input0, StatesForm.set_name1)
+
+
+    dp.message.register(handle_user_message, F.text)
+
 
 
     dp.callback_query.register(set_gender_male, F.data.startswith('set_male'))

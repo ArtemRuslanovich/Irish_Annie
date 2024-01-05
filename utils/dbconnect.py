@@ -34,3 +34,13 @@ class Request:
         query = f"INSERT INTO userscredits (user_id, gender) VALUES ({user_id}, '{gender}')" \
              f" ON CONFLICT (user_id) DO UPDATE SET gender='{gender}'"
         await self.connector.execute(query)
+
+    @classmethod
+    async def check_credits(cls, user_id, words_count, connector: asyncpg.pool.Pool):
+        query = f"SELECT credits FROM userscredits WHERE user_id = {user_id}"
+        result = await connector.fetchrow(query)
+        credits = result['credits'] if result else 0
+
+        enough_credits = credits >= words_count
+
+        return enough_credits
