@@ -117,3 +117,34 @@ bot_settings_keyboard = InlineKeyboardMarkup(inline_keyboard=[
         )
     ]
 ])
+
+continue_name_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [
+        InlineKeyboardButton(
+            text='continue',
+            callback_data='continue_name'
+        )
+    ]
+])
+
+continue_gender_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [
+        InlineKeyboardButton(
+            text='continue',
+            callback_data='continue_gender'
+        )
+    ]
+])
+
+gender_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [
+        InlineKeyboardButton(
+            text='🙎‍♂️ Male',
+            callback_data='set_male'
+        ),
+        InlineKeyboardButton(
+            text='👩‍🦳 Female',
+            callback_data='set_female'
+        )
+    ]
+])

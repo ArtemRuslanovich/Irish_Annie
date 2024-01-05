@@ -9,5 +9,6 @@ class StatesForm(StatesGroup):
     get_bot_settings = State()
     get_credits = State()
     set_name = State()
+    set_name1 = State()
 
 

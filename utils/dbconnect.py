@@ -31,6 +31,6 @@ class Request:
         await self.connector.execute(query)
 
     async def set_gender(self, user_id, gender):
-        query = f"INSERT INTO userscredits (user_id, gыender) VALUES ({user_id}, '{gender}')" \
+        query = f"INSERT INTO userscredits (user_id, gender) VALUES ({user_id}, '{gender}')" \
              f" ON CONFLICT (user_id) DO UPDATE SET gender='{gender}'"
         await self.connector.execute(query)
