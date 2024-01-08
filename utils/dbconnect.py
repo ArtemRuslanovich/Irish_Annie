@@ -44,3 +44,23 @@ class Request:
         enough_credits = credits >= words_count
 
         return enough_credits
+    
+    @staticmethod
+    async def subtract_credits(user_id: int, words_count: int, connection: asyncpg.Connection):
+        try:
+            # Предположим, что у вас есть таблица users с колонками id, credits
+            query = """
+                UPDATE userscredits
+                SET credits = credits - $1
+                WHERE user_id = $2
+                RETURNING credits;
+            """
+            # Выполняем запрос к базе данных
+            result = await connection.fetchrow(query, words_count, user_id)
+            
+            # Печатаем текущее количество кредитов после вычета
+            if result:
+                new_credits = result['credits']
+                print(f"User {user_id} now has {new_credits} credits.")
+        except Exception as e:
+            print(f"Error subtracting credits: {e}")
