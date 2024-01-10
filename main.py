@@ -9,9 +9,6 @@ from callbacks.back_settings_callback import back_settings
 from callbacks.bot_settings_callback import bot_settings
 from callbacks.continue_gender import customer0
 from callbacks.continue_name import ask_for_name0, process_name_input0
-from callbacks.credits_pay.four import four_credits
-from callbacks.credits_pay.three import three_credits
-from callbacks.credits_pay.two import two_credits
 from callbacks.customer_callback import customer
 from callbacks.info_callback import info
 from callbacks.profile_callback import profile
@@ -27,7 +24,7 @@ from Commands.commands import set_commands
 from middlewares.dbmiddleware import Dbsession
 from utils.postgresdata import create_pool
 from callbacks.credits import credits
-from callbacks.credits_pay.one import one_credits, pre_checkout_query, successful_payment
+from callbacks.credits_pay.one import pre_checkout_query, send_invoice, successful_payment
 from utils.statesform import StatesForm
 
 
@@ -56,26 +53,19 @@ async def start_bot(bot: Bot):
     dp.callback_query.register(customer0, F.data.startswith('continue_gender'))
 
 
+    dp.callback_query.register(ask_for_name0, F.data.startswith('continue_name'))
+    dp.message.register(process_name_input0, StatesForm.set_name1)
+    dp.callback_query.register(set_gender_male, F.data.startswith('set_male'))
+    dp.callback_query.register(set_gender_female, F.data.startswith('set_female'))
     dp.callback_query.register(ask_for_name, F.data.startswith('set_name'))
     dp.message.register(process_name_input, StatesForm.set_name)
 
-    dp.callback_query.register(ask_for_name0, F.data.startswith('continue_name'))
-    dp.message.register(process_name_input0, StatesForm.set_name1)
 
 
     dp.message.register(handle_user_message, F.text)
 
-
-
-    dp.callback_query.register(set_gender_male, F.data.startswith('set_male'))
-    dp.callback_query.register(set_gender_female, F.data.startswith('set_female'))
-
-
     dp.pre_checkout_query.register(pre_checkout_query)
-    dp.callback_query.register(one_credits, F.data.startswith('1000'))
-    dp.callback_query.register(two_credits, F.data.startswith('2000'))
-    dp.callback_query.register(three_credits, F.data.startswith('3000'))
-    dp.callback_query.register(four_credits, F.data.startswith('4000'))
+    dp.callback_query.register(send_invoice, F.data.startswith('credits'))
     dp.message.register(successful_payment, F.content_type==ContentType.SUCCESSFUL_PAYMENT)
     dp.update.middleware.register(Dbsession(pool_connect))
 

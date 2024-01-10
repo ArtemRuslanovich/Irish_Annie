@@ -2,7 +2,7 @@ from aiogram import Bot
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
 from utils.dbconnect import Request
-from keyboards.inline import start_keyboard, continue_name_keyboard
+from keyboards.inline import start_keyboard, continue_name_keyboard, gender_keyboard
 from aiogram.fsm.context import FSMContext
 from utils.statesform import StatesForm
 
@@ -10,18 +10,9 @@ from utils.statesform import StatesForm
 async def command_start_handler(message: Message, state: FSMContext, bot: Bot, request: Request):
     await state.set_state(StatesForm.get_start)
     await request.add_data(message.from_user.id, message.from_user.first_name)
-    await bot.send_message(text=(f"""🌈 Alisa is not just a bot; she's a gateway to limitless possibilities! Dive into a magical experience with Alisa's enchanting features.
+    await bot.send_message(text=(f"""👄 Hey there, I’m Irish Annie. Talk to me and I’ll warm your heart (among other things) 😘
 
-🔮 **Features:**
-- 🤖 **Smart Conversations:** Alisa loves a good chat! Engage in meaningful conversations and let her surprise you.
-- 🌐 **Global Insights:** Connect with users worldwide and discover diverse perspectives.
-- 🎉 **Fun Interactions:** From games to jokes, Alisa knows how to keep the fun alive!
-
-📚 **How to Use:**
-1. 🚀 **Start:** Hit /start to embark on your magical journey.
-2. ❓ **Help:** Need assistance? Simply type /help for quick guidance.
-
-🌟 **Let the magic begin!"""),chat_id=message.from_user.id, reply_markup=continue_name_keyboard)
+Let's start with a quick question...are you male or female?"""),chat_id=message.from_user.id, reply_markup=gender_keyboard)
 
 async def command_help_handler(message: Message) -> None:
     await message.reply(f"""❓ **How to Use Alisa: Quick Guide**

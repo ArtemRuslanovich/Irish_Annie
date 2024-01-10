@@ -3,26 +3,44 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 credits_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [
         InlineKeyboardButton(
-            text='1000 →  7.99$',
-            callback_data='1000'
+            text='100 →  1.49$',
+            callback_data='credits'
         )
     ],
     [
         InlineKeyboardButton(
-            text='2000 →  14.99$',
-            callback_data='2000'
+            text='200 →  2.99$',
+            callback_data='credits'
         )
     ],
     [
         InlineKeyboardButton(
-            text='3000 →  20.99$',
-            callback_data='3000'
+            text='500 →  4.99$',
+            callback_data='credits'
         )
     ],
     [
         InlineKeyboardButton(
-            text='4000 →  25.99$',
-            callback_data='4000'
+            text='1000 →  8.99$',
+            callback_data='credits'
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            text='2500 →  17.99$',
+            callback_data='credits'
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            text='5000 →  29.99$',
+            callback_data='credits'
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            text='10000 →  49.99$',
+            callback_data='credits'
         )
     ],
     [

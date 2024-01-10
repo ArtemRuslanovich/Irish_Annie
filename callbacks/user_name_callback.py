@@ -12,9 +12,8 @@ async def ask_for_name(callback: CallbackQuery, state: FSMContext):
 
 async def process_name_input(message: types.Message, state: FSMContext, request: Request):
     user_name = message.text.strip()
-
     user_id = message.from_user.id
     await request.add_name(user_id, user_name)
 
-    await state.clear()
-    await message.answer(f"Your username '{user_name}' has been successfully saved!")
+    await state.clear()  # Завершим состояние
+    await message.answer(f"Great, {user_name}! Thank you. Let's get on with it. 😘 You can ask me anything or chat with me about your day.")
