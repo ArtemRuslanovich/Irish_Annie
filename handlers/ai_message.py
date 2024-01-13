@@ -3,9 +3,10 @@ from aiogram import types
 from aiogram.enums import ParseMode
 from aiogram import Bot
 from insertapi.login import authenticate_and_create_chat
-from utils.postgresdata import close_db_connection, connect_to_db
 from utils.dbconnect import Request
 from typing import Dict
+from keyboards.credits import credits_keyboard
+
 
 # Словарь для отслеживания соответствия user_id и chat_id
 user_chat_mapping: Dict[int, str] = {}
@@ -46,4 +47,4 @@ async def handle_user_message(message: types.Message, bot: Bot, request: Request
             await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
     else:
         # Информируем пользователя о недостаточном количестве кредитов
-        await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.")
+        await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=credits_keyboard)
