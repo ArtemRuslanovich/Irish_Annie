@@ -7,8 +7,8 @@ from utils.dbconnect import Request
 from typing import Dict
 from keyboards.credits import credits_keyboard
 from keyboards.feedback import feedback_keyboard
-
-
+from aiogram.utils import markdown
+import re
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram import types
@@ -36,13 +36,20 @@ async def handle_user_message(message: types.Message, bot: Bot, request: Request
 
         try:
             response_text = response.content.decode("utf-8")
+            print(response_text)
             # Проверяем, содержит ли ответ сообщение
             if 'MESSAGE_UID' in response_text:
                 # Извлекаем часть сообщения до MESSAGE_UID
                 response_text = response_text.split('[MESSAGE_UID]')[0].strip()
+                print(response_text)
 
                 # Отнимаем кредиты из базы данных
                 await Request.subtract_credits(user_id, words_count, request.connector)
+#                response_text = process_message_text(response_text)
+                response_text = response_text.replace('*','_')
+
+                # Заменяем bold на italic в каждой части текста
+                print(response_text)
 
                 # Отправляем ответ с инлайн-клавиатурой
                 await bot.send_message(
@@ -60,6 +67,20 @@ async def handle_user_message(message: types.Message, bot: Bot, request: Request
         # Информируем пользователя о недостаточном количестве кредитов
         await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=credits_keyboard)
 
+def process_message_text(text):
+    # Проверяем, начинается ли текст с I{ и заканчивается ли на }
+    if text.startswith("I ") and text.endswith("."):
+        # Извлекаем текст между I{ и }
+        inner_text = text[2:-1]
+
+        # Применяем курсив к внутреннему тексту
+        italic_text = markdown.markdown(inner_text, extensions=['italic'])
+
+        # Возвращаем новый текст с курсивом
+        return italic_text
+    else:
+        # Возвращаем оригинальный текст
+        return text
 
 # Обработчик для оценки ответа
 async def process_feedback(callback_query: types.CallbackQuery, bot: Bot):
@@ -68,6 +89,7 @@ async def process_feedback(callback_query: types.CallbackQuery, bot: Bot):
     if callback_query.data == "like":
         # Отправляем благодарность за положительный фидбек
         await callback_query.answer(text="Thank you for your positive feedback! 😊", show_alert=True)
+        await bot.send_message(text='💋', chat_id=callback_query.message.chat.id)
     elif callback_query.data == "dislike":
         # Отправляем уведомление о том, что сообщение передано разработчику для проверки
         await callback_query.answer(text="Your feedback has been forwarded to the developer for review. Thank you for your input! 🙏", show_alert=True)
