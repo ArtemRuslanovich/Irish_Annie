@@ -16,6 +16,14 @@ class Request:
 
         return credits, user_id
     
+    async def add_bonus_credits(self, user_id: int, bonus_credits: int) -> None:
+        query = (
+            'UPDATE userscredits '
+            'SET credits = credits + $1 '
+            'WHERE user_id = $2'
+        )
+        await self.connector.execute(query, bonus_credits, user_id)
+    
     async def add_credits(self, user_id: int, credits: int):
         query = (
             'INSERT INTO userscredits (user_id, user_name, credits) '
@@ -64,3 +72,5 @@ class Request:
                 print(f"User {user_id} now has {new_credits} credits.")
         except Exception as e:
             print(f"Error subtracting credits: {e}")
+
+    

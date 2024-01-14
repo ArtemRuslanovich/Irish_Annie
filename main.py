@@ -12,6 +12,7 @@ from callbacks.continue_name import ask_for_name0, process_name_input0
 from callbacks.customer_callback import customer
 from callbacks.info_callback import info
 from callbacks.profile_callback import profile
+from callbacks.referal_callback import referal_system
 from callbacks.set_gender import set_gender_female, set_gender_male
 from callbacks.settings_callback import settings
 from callbacks.user_name_callback import ask_for_name, process_name_input
@@ -43,6 +44,7 @@ async def start_bot(bot: Bot):
 
     dp.callback_query.register(settings, F.data.startswith('settings'))
     dp.callback_query.register(profile, F.data.startswith('profile'))
+    dp.callback_query.register(referal_system, F.data.startswith('referal'))
     dp.callback_query.register(info, F.data.startswith('info'))
     dp.callback_query.register(back_start, F.data.startswith('back_start'))
     dp.callback_query.register(back_settings, F.data.startswith('back_settings'))

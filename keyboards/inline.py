@@ -18,6 +18,12 @@ start_keyboard = InlineKeyboardMarkup(inline_keyboard=[
             text='👤 Profile',
             callback_data='profile'
         )
+    ],
+    [
+        InlineKeyboardButton(
+            text='💰 Referal program',
+            callback_data='referal'
+        )
     ]
 ])
 
@@ -26,10 +32,6 @@ settings_keyboard = InlineKeyboardMarkup(inline_keyboard=[
         InlineKeyboardButton(
             text='🫵 About you',
             callback_data='customer'
-        ),
-        InlineKeyboardButton(
-            text='🫦 About Alise',
-            callback_data='bot_settings'
         )
     ],
     [
