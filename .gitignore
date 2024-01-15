@@ -2,10 +2,10 @@
 **/input.txt
 
 # Ignore settings.py file in the utils directory
-**/utils/settings.py
+**/settings.py
 
 # Ignore postgresdata.py file in the utils directory
-**/utils/postgresdata.py
+**/postgresdata.py
 
 # Ignore dbconnect.py file in the utils directory
-**/utils/dbconnect.py
+**/dbconnect.py
