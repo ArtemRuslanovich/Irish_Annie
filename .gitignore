@@ -1,4 +1,4 @@
-/input.txt
-/utils/settings.py
-/utils/postgresdata.py
-/utils/dbconnect.py
+**/input.txt
+**/utils/settings.py
+**/utils/postgresdata.py
+**/utils/dbconnect.py
