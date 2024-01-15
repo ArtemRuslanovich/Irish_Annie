@@ -64,20 +64,7 @@ async def successful_payment(message: Message, request: Request):
     user_id = message.from_user.id
     await request.add_credits(user_id, credits)
 
-    msg = """
-    🌟 **Thank you for your magical payment!**
-
-    Hello enchanting soul! 🌈 Your payment has just sprinkled a dash of stardust into our universe. 🚀
-
-    *Your generosity sparkles like the stars!* Your support means the world to us, and we're floating on air knowing you've chosen to join our journey.
-
-    ✨ *May your days be filled with joy and wonder!* If you ever need a sprinkle of magic or have questions, we're here for you.
-
-    Sending you beams of gratitude and a universe of thanks! 🌌💖
-
-    With love and cosmic energy,
-    Alisa
-    """
+    msg = """Thank You for loving me 💋 Back to our conversation...\nNow where were we? Let's keep chatting..."""
     await message.answer(msg)
 
 def calculate_credits(total_amount: int) -> int:
