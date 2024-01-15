@@ -17,7 +17,7 @@ IRISH ANNIE
 
 Description
 ---------
-Your Telegram bot provides users with the ability to interact with the artificial intelligence Irish Annie. The credit purchase system enhances the interaction with the bot, and payments as well as a referral program are configured, making the bot usage more convenient and appealing.
+Bot provides users with the ability to interact with the artificial intelligence Irish Annie. The credit purchase system enhances the interaction with the bot, and payments as well as a referral program are configured, making the bot usage more convenient and appealing.
 
 Features
 ----------------
