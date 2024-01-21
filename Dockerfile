@@ -12,6 +12,7 @@ COPY . /app
 
 # Установите зависимости Python
 WORKDIR /app
+RUN pip install -r requirements.txt
 
 # Запустите ваше приложение
 CMD ["python", "main.py"]
