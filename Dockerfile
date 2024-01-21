@@ -7,6 +7,8 @@ RUN apt-get update && \
 
 ENV PATH="/$HOME/.cargo/bin:${PATH}"
 
+RUN pip install --upgrade pip
+
 # Копируйте файлы проекта
 COPY . /app
 
