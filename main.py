@@ -1,9 +1,11 @@
 import asyncio
 import logging
 import sys
+import os
 from aiogram import Bot, Dispatcher, Router
 from aiogram.enums import ParseMode, ContentType
 import schedule
+from aiohttp import web
 from callbacks.back_start_callback import back_start
 from callbacks.back_settings_callback import back_settings
 from callbacks.bot_settings_callback import bot_settings
@@ -74,15 +76,30 @@ async def start_bot(bot: Bot):
 dp.startup.register(start_bot)
 
 async def main() -> None:
-    # Initialize Bot instance with a default parse mode which will be passed to all API calls
+    # Инициализация бота с настройками
     bot = Bot(Settings.bots.bot_token, parse_mode=ParseMode.HTML)
-    # And the run events dispatching
+
+    # Инициализация и запуск вашего бота
+    await start_bot(bot)
+
+    # Создание aiohttp веб-приложения для Heroku
+    app = web.Application()
+    app.router.add_get('/', lambda request: web.Response(text="Hello, your bot is running"))
+    app.router.add_post('/', lambda request: web.Response())
+
+    # Запуск aiohttp веб-сервера
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    await site.start()
+
+    # Запуск цикла опроса
     await dp.start_polling(bot)
 
     while True:
+        # Запуск запланированных задач
         await dp.loop.run_until_complete(schedule.run_pending())
         await asyncio.sleep(1)
-
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
