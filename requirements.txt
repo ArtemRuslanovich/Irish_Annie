@@ -46,7 +46,7 @@ Jinja2==3.1.2
 json5==0.9.14
 jsonify==0.5
 jsonpointer==2.4
-jsonschema==4.20.0
+jsonschema==4.10.0
 jsonschema-specifications==2023.11.2
 jupyter==1.0.0
 jupyter-console==6.6.3
