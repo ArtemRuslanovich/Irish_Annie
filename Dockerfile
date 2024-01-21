@@ -14,7 +14,8 @@ COPY . /app
 
 # Установите зависимости Python
 WORKDIR /app
-RUN pip install -r requirements.txt
+RUN pip install requirements.txt
+RUN pip uninstall jsonschema
 
 # Запустите ваше приложение
 CMD ["python", "main.py"]
