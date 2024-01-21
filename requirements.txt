@@ -139,4 +139,3 @@ Werkzeug==3.0.1
 widgetsnbextension==4.0.9
 wsproto==1.2.0
 yarl==1.9.3
-cryptography==3.4.7 --no-use-pep517
