@@ -23,7 +23,7 @@ async def send_invoice(callback: CallbackQuery):
         title=f'{credits_amount} credits',
         description=f'{credits_amount} credits will be available in your account',
         payload='Payment through a bot',
-        provider_token='1877036958:TEST:c5be40a8cc6d3aa94806faad49f6fc9b3d629c2c',
+        provider_token='350862534:LIVE:Njk1OThjMTU3ZDEx',
         currency='usd',
         prices=[
             LabeledPrice(
