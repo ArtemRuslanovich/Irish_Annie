@@ -58,7 +58,7 @@ class Request:
         try:
             query = """
                 UPDATE userscredits
-                SET credits = credits - 1  # Deduct one credit
+                SET credits = credits - 1
                 WHERE user_id = $1
                 RETURNING credits;
             """
