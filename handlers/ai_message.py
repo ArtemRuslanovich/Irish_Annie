@@ -10,19 +10,19 @@ from keyboards.feedback import feedback_keyboard
 from aiogram.utils import markdown
 import re
 
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from aiogram import types
 
 # Словарь для отслеживания соответствия user_id и chat_id
 user_chat_mapping: Dict[int, str] = {}
 
-async def handle_user_message(message, bot, request: Request):
+async def handle_user_message(message: Message, bot: Bot, request: Request):
     user_id = message.from_user.id
     # Authenticate and create chat_id (this needs to be a synchronous function)
     chat_id = authenticate_and_create_chat(user_id)
 
     # Check if the user has at least one credit (adapt to synchronous database call)
-    enough_credits = request.check_credits(user_id, request.connector)  # This function needs to be synchronous
+    enough_credits = await request.check_credits(user_id, request.connector)  # This function needs to be synchronous
 
     if enough_credits:
         # Process the message and generate a response
@@ -40,16 +40,16 @@ async def handle_user_message(message, bot, request: Request):
             # Further processing...
 
             # Deduct one credit from the database (adapt to synchronous database call)
-            request.subtract_credits(user_id, request.connector)  # This function needs to be synchronous
+            await request.subtract_credits(user_id, request.connector)  # This function needs to be synchronous
 
             # Send response (adapt to the synchronous method of your bot framework)
-            bot.send_message(chat_id=message.chat.id, text=response_text, parse_mode=ParseMode.MARKDOWN)
+            await bot.send_message(chat_id=message.chat.id, text=response_text, parse_mode=ParseMode.MARKDOWN)
         except Exception as e:
             print("Error processing API response:", e)
-            bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
+            await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
     else:
         # Inform the user about insufficient credits
-        bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=credits_keyboard)
+        await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=credits_keyboard)
 
 
 def process_message_text(text):
