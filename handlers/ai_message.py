@@ -16,7 +16,7 @@ from aiogram import types
 # Словарь для отслеживания соответствия user_id и chat_id
 user_chat_mapping: Dict[int, str] = {}
 
-def handle_user_message(message, bot, request: Request):
+async def handle_user_message(message, bot, request: Request):
     user_id = message.from_user.id
     # Authenticate and create chat_id (this needs to be a synchronous function)
     chat_id = authenticate_and_create_chat(user_id)
