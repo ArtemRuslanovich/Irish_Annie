@@ -37,7 +37,7 @@ async def handle_user_message(message: Message, bot: Bot, request: Request):
         try:
             response_text = response.content.decode("utf-8")
             print(response_text)
-            # Further processing...
+            response_text = response_text.split('[MESSAGE_UID]')[0].strip()
 
             # Deduct one credit from the database (adapt to synchronous database call)
             await request.subtract_credits(user_id, request.connector)  # This function needs to be synchronous
