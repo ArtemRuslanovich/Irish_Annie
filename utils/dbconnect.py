@@ -44,29 +44,26 @@ class Request:
         await self.connector.execute(query)
 
     @classmethod
-    async def check_credits(cls, user_id, words_count, connector: asyncpg.pool.Pool):
-        query = f"SELECT credits FROM userscredits WHERE user_id = {user_id}"
-        result = await connector.fetchrow(query)
+    async def check_credits(cls, user_id, connector: asyncpg.pool.Pool):
+        query = "SELECT credits FROM userscredits WHERE user_id = $1"
+        result = await connector.fetchrow(query, user_id)
         credits = result['credits'] if result else 0
 
-        enough_credits = credits >= words_count
+        enough_credits = credits >= 1  # Check if at least one credit is available
 
         return enough_credits
     
     @staticmethod
-    async def subtract_credits(user_id: int, words_count: int, connection: asyncpg.Connection):
+    async def subtract_credits(user_id: int, connection: asyncpg.Connection):
         try:
-            # Предположим, что у вас есть таблица users с колонками id, credits
             query = """
                 UPDATE userscredits
-                SET credits = credits - $1
-                WHERE user_id = $2
+                SET credits = credits - 1  # Deduct one credit
+                WHERE user_id = $1
                 RETURNING credits;
             """
-            # Выполняем запрос к базе данных
-            result = await connection.fetchrow(query, words_count, user_id)
+            result = await connection.fetchrow(query, user_id)
             
-            # Печатаем текущее количество кредитов после вычета
             if result:
                 new_credits = result['credits']
                 print(f"User {user_id} now has {new_credits} credits.")

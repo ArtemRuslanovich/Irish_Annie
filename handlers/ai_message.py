@@ -18,53 +18,23 @@ user_chat_mapping: Dict[int, str] = {}
 
 async def handle_user_message(message: types.Message, bot: Bot, request: Request):
     user_id = message.from_user.id
-    words_count = len(message.text.split())
     
-    # Создаем или получаем chat_id
+    # Authenticate and create chat_id
     chat_id = authenticate_and_create_chat(user_id)
 
-    # Проверяем, есть ли у пользователя достаточно кредитов
-    enough_credits = await Request.check_credits(user_id, words_count, request.connector)
+    # Check if the user has at least one credit
+    enough_credits = await Request.check_credits(user_id, request.connector)
 
     if enough_credits:
-        # Обрабатываем сообщение пользователя и генерируем ответ
-        url = "https://api.insertchatgpt.com/v1/embeds/messages"
-        payload = {'chat_uid': chat_id, 'widget_uid': '7acefd42-643d-4aaa-a013-8a91ff02e593', 'user_input': message.text}
-        headers = {}
+        # Process the message and generate a response
+        # [The rest of your code remains the same until the credit deduction part]
 
-        response = requests.post(url, headers=headers, data=payload)
+                # Deduct one credit from the database
+                await Request.subtract_credits(user_id, request.connector)
 
-        try:
-            response_text = response.content.decode("utf-8")
-            print(response_text)
-            # Проверяем, содержит ли ответ сообщение
-            if 'MESSAGE_UID' in response_text:
-                # Извлекаем часть сообщения до MESSAGE_UID
-                response_text = response_text.split('[MESSAGE_UID]')[0].strip()
-                print(response_text)
-
-                # Отнимаем кредиты из базы данных
-                await Request.subtract_credits(user_id, words_count, request.connector)
-#                response_text = process_message_text(response_text)
-                response_text = response_text.replace('*','_')
-
-                # Заменяем bold на italic в каждой части текста
-                print(response_text)
-
-                # Отправляем ответ с инлайн-клавиатурой
-                await bot.send_message(
-                    chat_id=message.chat.id,
-                    text=response_text,
-                    parse_mode=ParseMode.MARKDOWN,
-                    reply_markup=feedback_keyboard
-                )
-            else:
-                await bot.send_message(chat_id=message.chat.id, text="Unexpected response from the API.")
-        except Exception as e:
-            print("Error processing API response:", e)
-            await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
+                # [Rest of your code for response handling]
     else:
-        # Информируем пользователя о недостаточном количестве кредитов
+        # Inform the user about insufficient credits
         await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=credits_keyboard)
 
 def process_message_text(text):
