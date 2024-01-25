@@ -9,6 +9,6 @@ async def connect_to_db():
 
 async def close_db_connection(connection):
     await connection.close()
-
+#g
 async def create_pool():
     return await asyncpg.create_pool(DATABASE_URL, ssl='require')
