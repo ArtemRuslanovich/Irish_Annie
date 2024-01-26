@@ -1,7 +1,7 @@
 import asyncpg
 
 
-DATABASE_URL = "postgres://ranabctqvbuyhf:1a93ae9750e400cd45ad57c44fb48d43cdac667e08e59877bbf0ebaea46ddc77@ec2-3-232-218-211.compute-1.amazonaws.com:5432/d5eqr00dsh0g6"
+DATABASE_URL = "postgres://rbbftznippvgcs:a63f60adbeff86b64a857cef8250178a45a34aa81337f7a6d0f6d49c3258dcb5@ec2-54-83-138-228.compute-1.amazonaws.com:5432/dembn1uh43k4l3"
 
 async def connect_to_db():
     return await asyncpg.connect(DATABASE_URL, ssl='require')
