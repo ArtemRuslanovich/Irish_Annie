@@ -8,6 +8,6 @@ from utils.statesform import StatesForm
 async def credits(callback: CallbackQuery, state: FSMContext):
     await state.set_state(StatesForm.get_credits)
     await callback.message.edit_text(
-        f"💳 More credits, more fun with Joi. Choose now. 👄👅",
+        f"💳 More credits, more fun with Annie. Choose now. 👄👅",
         reply_markup=credits_keyboard
     )
