@@ -18,6 +18,9 @@ from callbacks.referal_callback import referal_system
 from callbacks.set_gender import set_gender_female, set_gender_male
 from callbacks.settings_callback import settings
 from callbacks.subs_callback import subs_callback
+from callbacks.subs_pay_callbacks.basic import process_subscribe_basic
+from callbacks.subs_pay_callbacks.platinum import process_subscribe_platinum
+from callbacks.subs_pay_callbacks.pro import process_subscribe_pro
 from callbacks.user_name_callback import ask_for_name, process_name_input
 from handlers.ai_message import handle_user_message, process_feedback
 from handlers.start import command_menu_handler, command_start_handler, command_help_handler
@@ -71,7 +74,12 @@ async def start_bot(bot: Bot):
     dp.pre_checkout_query.register(pre_checkout_query)
     dp.callback_query.register(process_feedback, lambda c: c.data in ["like", "dislike"])
     dp.callback_query.register(send_invoice, F.data.startswith('credits'))
-    dp.callback_query.register(subs_callback, F.data.startswith('subscripe'))
+    dp.callback_query.register(subs_callback, F.data.startswith('subs'))
+
+    dp.callback_query.register(process_subscribe_basic, F.data.startswith('subscripe_2000'))
+    dp.callback_query.register(process_subscribe_pro, F.data.startswith('subscripe_5000'))
+    dp.callback_query.register(process_subscribe_platinum, F.data.startswith('subscripe_10000'))
+
     dp.message.register(successful_payment, F.content_type==ContentType.SUCCESSFUL_PAYMENT)
     dp.update.middleware.register(Dbsession(pool_connect))
 

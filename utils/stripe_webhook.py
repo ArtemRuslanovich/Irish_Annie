@@ -7,6 +7,8 @@ app = Flask(__name__)
 # Stripe API secret key
 stripe.api_key = os.getenv('whsec_9b51de4c6d1c0be356f807cb2eaf26f0675c1d1169f71dce134d9e06e263820f')
 
+endpoint_secret = 'whsec_9b51de4c6d1c0be356f807cb2eaf26f0675c1d1169f71dce134d9e06e263820f'
+
 @app.route('/webhook', methods=['POST'])
 def stripe_webhook():
     payload = request.data
@@ -15,7 +17,7 @@ def stripe_webhook():
 
     try:
         event = stripe.Webhook.construct_event(
-            payload, sig_header, os.getenv('STRIPE_ENDPOINT_SECRET')
+            payload, sig_header, endpoint_secret
         )
     except ValueError as e:
         # Invalid payload
