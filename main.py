@@ -76,9 +76,9 @@ async def start_bot(bot: Bot):
     dp.callback_query.register(send_invoice, F.data.startswith('credits'))
     dp.callback_query.register(subs_callback, F.data.startswith('subs'))
 
-    dp.callback_query.register(process_subscribe_basic, F.data.startswith('subscripe_2000'))
-    dp.callback_query.register(process_subscribe_pro, F.data.startswith('subscripe_5000'))
-    dp.callback_query.register(process_subscribe_platinum, F.data.startswith('subscripe_10000'))
+    dp.callback_query.register(process_subscribe_basic, F.data.startswith('sabs'))
+    dp.callback_query.register(process_subscribe_pro, F.data.startswith('sobs'))
+    dp.callback_query.register(process_subscribe_platinum, F.data.startswith('sibs'))
 
     dp.message.register(successful_payment, F.content_type==ContentType.SUCCESSFUL_PAYMENT)
     dp.update.middleware.register(Dbsession(pool_connect))

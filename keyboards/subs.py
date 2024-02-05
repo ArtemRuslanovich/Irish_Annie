@@ -4,19 +4,19 @@ subs_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [
         InlineKeyboardButton(
             text='Basic →  $9.99 (18% Discount)',
-            callback_data='subscripe_2000'
+            callback_data='sabs'
         )
     ],
     [
         InlineKeyboardButton(
             text='Pro →  $19.99 (33% Discount)',
-            callback_data='subscripe_5000'
+            callback_data='sobs'
         )
     ],
     [
         InlineKeyboardButton(
             text='Platinum →  $49.99 (50% Discount)',
-            callback_data='subscripe_20000'
+            callback_data='sibs'
         )
     ],
     [
