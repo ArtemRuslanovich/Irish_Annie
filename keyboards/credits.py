@@ -47,9 +47,11 @@ credits_keyboard = InlineKeyboardMarkup(inline_keyboard=[
         InlineKeyboardButton(
             text='◀️ Back',
             callback_data='profile'
-        ),
+        )
+    ],
+    [
         InlineKeyboardButton(
-            text='subscripe',
+            text=f'❤️Subscribe monthly for 50% discount and 20000 credits❤️',
             callback_data='subs'
         )
     ]
