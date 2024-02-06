@@ -114,7 +114,7 @@ async def main() -> None:
     app = web.Application()
     app.router.add_get('/', index)  # Serve the main subscription page
     app.router.add_post('/create-checkout-session', create_checkout_session)  # Handle Stripe Checkout session creation
-    app.router.add_static('/static/', path='D:/newbot/utils/subs/static', name='static')  # Serve static files    app.router.add_post('/', lambda request: web.Response())
+    app.router.add_static('/static/', path='./static', name='static')  # Serve static files    app.router.add_post('/', lambda request: web.Response())
 
     # Запуск aiohttp веб-сервера
     runner = web.AppRunner(app)
