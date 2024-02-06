@@ -79,29 +79,7 @@ async def start_bot(bot: Bot):
     dp.message.register(successful_payment, F.content_type==ContentType.SUCCESSFUL_PAYMENT)
     dp.update.middleware.register(Dbsession(pool_connect))
 
-    dp.startup.register(start_bot)
-
-async def index(request):
-    """Serve the subscription page."""
-    return web.FileResponse('D:/newbot/utils/subs/templates/index.html')
-
-async def create_checkout_session(request):
-    """Endpoint for creating a Stripe Checkout session."""
-    data = await request.json()
-    try:
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price': data['price_id'],  # You'll need to pass the correct price ID from the front end
-                'quantity': 1,
-            }],
-            mode='subscription',
-            success_url='http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',  # Adjust with your URL
-            cancel_url='http://localhost:3000/cancel',  # Adjust with your URL
-        )
-        return web.json_response({'id': session.id})
-    except Exception as e:
-        return web.Response(text=str(e), status=500)
+dp.startup.register(start_bot)
 
 async def main() -> None:
     # Инициализация бота с настройками
@@ -112,9 +90,8 @@ async def main() -> None:
 
     # Создание aiohttp веб-приложения для Heroku
     app = web.Application()
-    app.router.add_get('/', index)  # Serve the main subscription page
-    app.router.add_post('/create-checkout-session', create_checkout_session)  # Handle Stripe Checkout session creation
-    app.router.add_static('/static/', path='./static', name='static')  # Serve static files    app.router.add_post('/', lambda request: web.Response())
+    app.router.add_get('/', lambda request: web.Response(text="Hello, your bot is running"))
+    app.router.add_post('/', lambda request: web.Response())
 
     # Запуск aiohttp веб-сервера
     runner = web.AppRunner(app)
