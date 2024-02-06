@@ -18,9 +18,6 @@ from callbacks.referal_callback import referal_system
 from callbacks.set_gender import set_gender_female, set_gender_male
 from callbacks.settings_callback import settings
 from callbacks.subs_callback import subs_callback
-from callbacks.subs_pay_callbacks.basic import process_subscribe_basic
-from callbacks.subs_pay_callbacks.platinum import process_subscribe_platinum
-from callbacks.subs_pay_callbacks.pro import process_subscribe_pro
 from callbacks.user_name_callback import ask_for_name, process_name_input
 from handlers.ai_message import handle_user_message, process_feedback
 from handlers.start import command_menu_handler, command_start_handler, command_help_handler
@@ -33,6 +30,10 @@ from utils.postgresdata import create_pool
 from callbacks.credits import credits
 from callbacks.credits_pay.one import pre_checkout_query, send_invoice, successful_payment
 from utils.statesform import StatesForm
+
+from aiogram.types import Message
+import stripe
+
 
 
 
@@ -76,14 +77,33 @@ async def start_bot(bot: Bot):
     dp.callback_query.register(send_invoice, F.data.startswith('credits'))
     dp.callback_query.register(subs_callback, F.data.startswith('subs'))
 
-    dp.callback_query.register(process_subscribe_basic, F.data.startswith('sabs'))
-    dp.callback_query.register(process_subscribe_pro, F.data.startswith('sobs'))
-    dp.callback_query.register(process_subscribe_platinum, F.data.startswith('sibs'))
 
     dp.message.register(successful_payment, F.content_type==ContentType.SUCCESSFUL_PAYMENT)
     dp.update.middleware.register(Dbsession(pool_connect))
 
-dp.startup.register(start_bot)
+    dp.startup.register(start_bot)
+
+async def index(request):
+    """Serve the subscription page."""
+    return web.FileResponse('D:/newbot/utils/subs/templates/index.html')
+
+async def create_checkout_session(request):
+    """Endpoint for creating a Stripe Checkout session."""
+    data = await request.json()
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price': data['price_id'],  # You'll need to pass the correct price ID from the front end
+                'quantity': 1,
+            }],
+            mode='subscription',
+            success_url='http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',  # Adjust with your URL
+            cancel_url='http://localhost:3000/cancel',  # Adjust with your URL
+        )
+        return web.json_response({'id': session.id})
+    except Exception as e:
+        return web.Response(text=str(e), status=500)
 
 async def main() -> None:
     # Инициализация бота с настройками
@@ -94,8 +114,9 @@ async def main() -> None:
 
     # Создание aiohttp веб-приложения для Heroku
     app = web.Application()
-    app.router.add_get('/', lambda request: web.Response(text="Hello, your bot is running"))
-    app.router.add_post('/', lambda request: web.Response())
+    app.router.add_get('/', index)  # Serve the main subscription page
+    app.router.add_post('/create-checkout-session', create_checkout_session)  # Handle Stripe Checkout session creation
+    app.router.add_static('/static/', path='D:/newbot/utils/subs/static', name='static')  # Serve static files    app.router.add_post('/', lambda request: web.Response())
 
     # Запуск aiohttp веб-сервера
     runner = web.AppRunner(app)

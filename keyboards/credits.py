@@ -45,14 +45,14 @@ credits_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     ],
     [
         InlineKeyboardButton(
-            text='◀️ Back',
-            callback_data='profile'
+            text=f'❤️Subscribe monthly for 50% discount and 20000 credits❤️',
+            url='https://probably-kit.github.io/subscription-choice-menu/'
         )
     ],
     [
         InlineKeyboardButton(
-            text=f'❤️Subscribe monthly for 50% discount and 20000 credits❤️',
-            callback_data='subs'
+            text='◀️ Back',
+            callback_data='profile'
         )
     ]
 ])
