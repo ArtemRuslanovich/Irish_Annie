@@ -29,6 +29,7 @@ from utils.postgresdata import create_pool
 from callbacks.credits import credits
 from callbacks.credits_pay.one import pre_checkout_query, send_invoice, successful_payment
 from utils.statesform import StatesForm
+from handlers.stripe_handler import create_checkout_session
 
 from aiogram.types import Message
 import stripe
@@ -92,6 +93,8 @@ async def main() -> None:
     app = web.Application()
     app.router.add_get('/', lambda request: web.Response(text="Hello, your bot is running"))
     app.router.add_post('/', lambda request: web.Response())
+    app.router.add_post('/create-checkout-session', create_checkout_session)
+
 
     # Запуск aiohttp веб-сервера
     runner = web.AppRunner(app)
