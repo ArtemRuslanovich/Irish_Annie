@@ -5,7 +5,7 @@ from aiogram import Bot
 from insertapi.login import authenticate_and_create_chat
 from utils.dbconnect import Request
 from typing import Dict
-from keyboards.credits import credits_keyboard, get_keyboard
+from keyboards.credits import get_keyboard
 from keyboards.feedback import feedback_keyboard
 from aiogram.utils import markdown
 import re
