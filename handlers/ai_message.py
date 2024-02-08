@@ -20,7 +20,7 @@ async def handle_user_message(message: Message, bot: Bot, request: Request):
     user_id = message.from_user.id
     # Authenticate and create chat_id (this needs to be a synchronous function)
     chat_id = authenticate_and_create_chat(user_id)
-    keyboard = get_keyboard(user_id)
+    keyboard = await get_keyboard(user_id)
 
     # Check if the user has at least one credit (adapt to synchronous database call)
     enough_credits = await request.check_credits(user_id, request.connector)  # This function needs to be synchronous
