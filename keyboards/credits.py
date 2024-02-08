@@ -1,5 +1,8 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import CallbackQuery
 
+
+user_id = CallbackQuery.from_user.id
 credits_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [
         InlineKeyboardButton(
@@ -46,7 +49,7 @@ credits_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [
         InlineKeyboardButton(
             text=f'❤️Subscribe monthly for 50% discount and 20000 credits❤️',
-            url='https://probably-kit.github.io/subscription-choice-menu/'
+            url=f'https://probably-kit.github.io/subscription-choice-menu/?user_id={user_id}'
         )
     ],
     [

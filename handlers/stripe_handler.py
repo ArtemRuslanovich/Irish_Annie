@@ -7,10 +7,19 @@ from utils.dbconnect import Request
 # Установите ваш Stripe секретный ключ здесь
 stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
+credits_mapping = {
+    'price_basic': 2000,  # ID цены для базовой подписки
+    'price_pro': 5000,    # ID цены для профессиональной подписки
+    'price_platinum': 20000,  # ID цены для платиновой подписки
+}
+
 async def create_checkout_session(request):
     data = await request.json()
     user_id = data['user_id']  # Получение user_id из запроса
     price_id = data['price_id']  # Получение price_id подписки
+
+    # Определение количества кредитов на основе price_id
+    credits = credits_mapping.get(price_id, 0)  # Возвращает 0, если price_id нет в словаре
 
     try:
         session = stripe.checkout.Session.create(
@@ -22,7 +31,7 @@ async def create_checkout_session(request):
             mode='subscription',
             success_url='https://example.com/success?session_id={CHECKOUT_SESSION_ID}',
             cancel_url='https://example.com/cancel',
-            metadata={'user_id': user_id}
+            metadata={'user_id': user_id, 'credits': credits}  # Добавление user_id и credits в метаданные
         )
         return web.json_response({
             'id': session.id
