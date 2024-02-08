@@ -5,7 +5,7 @@ from aiogram import Bot
 from insertapi.login import authenticate_and_create_chat
 from utils.dbconnect import Request
 from typing import Dict
-from keyboards.credits import credits_keyboard
+from keyboards.credits import credits_keyboard, get_keyboard
 from keyboards.feedback import feedback_keyboard
 from aiogram.utils import markdown
 import re
@@ -20,6 +20,7 @@ async def handle_user_message(message: Message, bot: Bot, request: Request):
     user_id = message.from_user.id
     # Authenticate and create chat_id (this needs to be a synchronous function)
     chat_id = authenticate_and_create_chat(user_id)
+    keyboard = get_keyboard(user_id)
 
     # Check if the user has at least one credit (adapt to synchronous database call)
     enough_credits = await request.check_credits(user_id, request.connector)  # This function needs to be synchronous
@@ -50,7 +51,7 @@ async def handle_user_message(message: Message, bot: Bot, request: Request):
             await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
     else:
         # Inform the user about insufficient credits
-        await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=credits_keyboard)
+        await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=keyboard)
 
 
 def process_message_text(text):
