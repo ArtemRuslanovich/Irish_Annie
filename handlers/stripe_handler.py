@@ -46,7 +46,7 @@ async def stripe_webhook(request, req: Request):
 
     try:
         event = stripe.Webhook.construct_event(
-            payload, sig_header, "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"
+            payload, sig_header, "whsec_9b51de4c6d1c0be356f807cb2eaf26f0675c1d1169f71dce134d9e06e263820f"
         )
     except ValueError as e:
         # Неверный payload
