@@ -5,7 +5,7 @@ import json
 from utils.dbconnect import Request
 
 # Установите ваш Stripe секретный ключ здесь
-stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+stripe.api_key = os.getenv('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')
 
 credits_mapping = {
     'price_basic': 2000,  # ID цены для базовой подписки
@@ -29,8 +29,8 @@ async def create_checkout_session(request):
                 'quantity': 1,
             }],
             mode='subscription',
-            success_url='https://example.com/success?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url='https://example.com/cancel',
+            success_url='https://vast-ridge-79175-71505a819c13.herokuapp.com/success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='https://vast-ridge-79175-71505a819c13.herokuapp.com/cancel',
             metadata={'user_id': user_id, 'credits': credits}  # Добавление user_id и credits в метаданные
         )
         return web.json_response({
@@ -46,7 +46,7 @@ async def stripe_webhook(request, req: Request):
 
     try:
         event = stripe.Webhook.construct_event(
-            payload, sig_header, "whsec_..."
+            payload, sig_header, "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"
         )
     except ValueError as e:
         # Неверный payload
