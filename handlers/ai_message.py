@@ -45,7 +45,7 @@ async def handle_user_message(message: Message, bot: Bot, request: Request):
             await request.subtract_credits(user_id, request.connector)  # This function needs to be synchronous
 
             # Send response (adapt to the synchronous method of your bot framework)
-            await bot.send_message(chat_id=message.chat.id, text=response_text, parse_mode=ParseMode.MARKDOWN)
+            await bot.send_message(chat_id=message.chat.id, text=response_text, parse_mode=ParseMode.MARKDOWN, reply_markup=feedback_keyboard)
         except Exception as e:
             print("Error processing API response:", e)
             await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
