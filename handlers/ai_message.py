@@ -1,3 +1,4 @@
+import json
 import requests
 from aiogram import types
 from aiogram.enums import ParseMode
@@ -29,7 +30,7 @@ async def handle_user_message(message: Message, bot: Bot, request: Request):
         # Process the message and generate a response
         # (This part needs significant changes if originally asynchronous)
         url = "https://api.insertchatgpt.com/v1/embeds/messages"
-        payload = {'chat_uid': chat_id, 'widget_uid': '7acefd42-643d-4aaa-a013-8a91ff02e593', 'input': message.text, 'disable_stream': 'false', 'role': 'user', 'dynamic_context': '','dynamic_questions': '','dynamic_system_behavior': ''}
+        payload = {'chat_uid': f'"{chat_id}"', 'widget_uid': '7acefd42-643d-4aaa-a013-8a91ff02e593', 'input': f'"{message.text}"', 'disable_stream': 'false', 'role': 'user', 'dynamic_context': '','dynamic_questions': '','dynamic_system_behavior': ''}
         headers = {}
         
         # Use a synchronous method to make HTTP requests, e.g., requests.post
@@ -40,7 +41,8 @@ async def handle_user_message(message: Message, bot: Bot, request: Request):
             if response.status_code == 200:
                 # Extract output_text from JSON response
                 response_data = response.json()
-                output_text = response_data.get('_readableState', {}).get('buffer', {}).get('head', {}).get('data', '')
+                response_json = response_data.get('_readableState', {}).get('buffer', {}).get('head', {}).get('data', '')
+                output_text = json.loads(response_json)[0]['output_text']
                 output_text = output_text.split('[MESSAGE_UID]')[0].strip().replace("*", "_", 1).replace("*", "_", -1).replace("_", "(", 1).replace("_", ")", 1)
 
                 # Deduct one credit from the database (adapt to synchronous database call)

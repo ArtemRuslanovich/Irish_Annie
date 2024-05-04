@@ -9,11 +9,12 @@ response = requests.post(url, data=payload, headers=headers)
 response_data = json.loads(response.text)
 
 # Извлекаем текст ответа
-output_text = response_data['_readableState']['buffer']['head']['data']
+output_text = response_data.get('_readableState', {}).get('buffer', {}).get('head', {}).get('data', '')
+
 
 # Убираем лишние символы и оставляем только текст ответа
 cleaned_text = output_text.strip().split('[AI]')[1].split(']')[0]
 
 # Выводим текст ответа
-print(response_data)
+print(output_text)
 
