@@ -9,6 +9,7 @@ from keyboards.credits import get_keyboard
 from keyboards.feedback import feedback_keyboard
 from aiogram.utils import markdown
 import re
+import json
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from aiogram import types
@@ -36,22 +37,23 @@ async def handle_user_message(message: Message, bot: Bot, request: Request):
         response = requests.post(url, headers=headers, data=payload)
 
         try:
-            response_text = response.content.decode("utf-8")
-            print(response_text)
-            response_text = response_text.split('[MESSAGE_UID]')[0].strip()
-            response_text = response_text.replace("*", "_", 1).replace("*", "_", -1).replace("_", "(", 1).replace("_", ")", 1)
+            # Extract output_text from JSON response
+            response_data = json.loads(response.text)
+            output_text = response_data['_readableState']['buffer']['head']['data']
+            output_text = json.loads(output_text.strip().split('[AI]')[1].split(']')[0])[0]['output_text']
 
             # Deduct one credit from the database (adapt to synchronous database call)
             await request.subtract_credits(user_id, request.connector)  # This function needs to be synchronous
 
             # Send response (adapt to the synchronous method of your bot framework)
-            await bot.send_message(chat_id=message.chat.id, text=response_text, parse_mode=ParseMode.MARKDOWN, reply_markup=feedback_keyboard)
+            await bot.send_message(chat_id=message.chat.id, text=output_text, parse_mode=ParseMode.MARKDOWN, reply_markup=feedback_keyboard)
         except Exception as e:
             print("Error processing API response:", e)
             await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
     else:
         # Inform the user about insufficient credits
         await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=keyboard)
+
 
 
 def process_message_text(text):
@@ -80,6 +82,7 @@ async def process_feedback(callback_query: types.CallbackQuery, bot: Bot):
     elif callback_query.data == "dislike":
         # Отправляем уведомление о том, что сообщение передано разработчику для проверки
         await callback_query.answer(text="Your feedback has been forwarded to the developer for review. Thank you for your input! 🙏", show_alert=True)
+
 
 
         

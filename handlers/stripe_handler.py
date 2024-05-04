@@ -55,11 +55,19 @@ async def stripe_webhook(request, req: Request):
         # Неверная подпись
         return web.Response(status=400)
 
+    # Добавим логирование, чтобы увидеть данные сессии Stripe
+    print("Received webhook event:", event)
+
     # Обработка события успешной оплаты
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
         user_id = session['metadata']['user_id']
         credits = session['metadata']['credits']
+        
+        # Добавим логирование перед вызовом функции добавления кредитов
+        print(f"User ID: {user_id}, Credits: {credits}")
+        
+        # Вызываем функцию добавления кредитов
         await req.add_credits(user_id, credits)
 
     return web.Response(text=json.dumps({'status': 'success'}), status=200)

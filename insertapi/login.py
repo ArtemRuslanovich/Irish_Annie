@@ -38,10 +38,12 @@ def authenticate_and_create_chat(user_id):
                     # Сохраняем chat_id в словаре user_chat_mapping
                     user_chat_mapping[user_id] = chat_uid
 
-                    return chat_uid
+                    print(chat_uid) 
                 else:
                     print("Error: 'chat_uid' not found in the computed_messages")
             else:
                 print("Error: 'pivot_app_uid' not found in the user data")
         else:
             print("Error: Authentication request failed with status code", auth_response.status_code)
+
+authenticate_and_create_chat(12345)
