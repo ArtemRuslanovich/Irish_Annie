@@ -9,7 +9,6 @@ from keyboards.credits import get_keyboard
 from keyboards.feedback import feedback_keyboard
 from aiogram.utils import markdown
 import re
-import json
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from aiogram import types
@@ -30,30 +29,34 @@ async def handle_user_message(message: Message, bot: Bot, request: Request):
         # Process the message and generate a response
         # (This part needs significant changes if originally asynchronous)
         url = "https://api.insertchatgpt.com/v1/embeds/messages"
-        payload = {'chat_uid': chat_id, 'widget_uid': '7acefd42-643d-4aaa-a013-8a91ff02e593', 'user_input': message.text}
+        payload = {'chat_uid': chat_id, 'widget_uid': '7acefd42-643d-4aaa-a013-8a91ff02e593', 'input': message.text, 'disable_stream': 'false', 'role': 'user', 'dynamic_context': '','dynamic_questions': '','dynamic_system_behavior': ''}
         headers = {}
         
         # Use a synchronous method to make HTTP requests, e.g., requests.post
         response = requests.post(url, headers=headers, data=payload)
 
         try:
-            # Extract output_text from JSON response
-            response_data = json.loads(response.text)
-            output_text = response_data['_readableState']['buffer']['head']['data']
-            output_text = json.loads(output_text.strip().split('[AI]')[1].split(']')[0])[0]['output_text']
+            # Check if the response is successful
+            if response.status_code == 200:
+                # Extract output_text from JSON response
+                response_data = response.json()
+                output_text = response_data.get('_readableState', {}).get('buffer', {}).get('head', {}).get('data', '')
+                output_text = output_text.split('[MESSAGE_UID]')[0].strip().replace("*", "_", 1).replace("*", "_", -1).replace("_", "(", 1).replace("_", ")", 1)
 
-            # Deduct one credit from the database (adapt to synchronous database call)
-            await request.subtract_credits(user_id, request.connector)  # This function needs to be synchronous
+                # Deduct one credit from the database (adapt to synchronous database call)
+                await request.subtract_credits(user_id, request.connector)  # This function needs to be synchronous
 
-            # Send response (adapt to the synchronous method of your bot framework)
-            await bot.send_message(chat_id=message.chat.id, text=output_text, parse_mode=ParseMode.MARKDOWN, reply_markup=feedback_keyboard)
+                # Send response (adapt to the synchronous method of your bot framework)
+                await bot.send_message(chat_id=message.chat.id, text=output_text, parse_mode=ParseMode.MARKDOWN, reply_markup=feedback_keyboard)
+            else:
+                print("Error processing API response. Status code:", response.status_code)
+                await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
         except Exception as e:
             print("Error processing API response:", e)
             await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
     else:
         # Inform the user about insufficient credits
         await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=keyboard)
-
 
 
 def process_message_text(text):
