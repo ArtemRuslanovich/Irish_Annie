@@ -9,7 +9,7 @@ def authenticate_and_create_chat(user_id):
         # Если уже есть, используем сохраненный chat_id
         return user_chat_mapping[user_id]
 
-    url_auth = "https://api.insertchatgpt.com/v1/auth/login"
+    url_auth = "https://api.insertchat.com/v1/auth/access"
 
     payload_auth = {'email': 'annie@irishannie.com', 'password': 'Irishannie123!'}
     headers_auth = {}
