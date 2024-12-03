@@ -49,7 +49,7 @@ async def get_keyboard(user_id):
         [
             InlineKeyboardButton(
                 text=f'❤️Subscribe monthly for 50% discount and 20000 credits❤️',
-                url=f'https://probably-kit.github.io/subscription-choice-menu/?user_id={user_id}'
+                url=f'https://irishannie.com/subscribe/'
             )
         ],
         [
