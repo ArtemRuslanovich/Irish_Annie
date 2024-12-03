@@ -19,42 +19,43 @@ user_chat_mapping: Dict[int, str] = {}
 
 async def handle_user_message(message: Message, bot: Bot, request: Request):
     user_id = message.from_user.id
-    # Authenticate and create chat_id (this needs to be a synchronous function)
+
+    # Вызов синхронной функции для аутентификации и создания chat_id
     chat_id = authenticate_and_create_chat(user_id)
+
+    # Вызов асинхронной функции для получения клавиатуры
     keyboard = await get_keyboard(user_id)
 
-    # Check if the user has at least one credit (adapt to synchronous database call)
-    enough_credits = await request.check_credits(user_id, request.connector)  # This function needs to be synchronous
+    # Получаем данные о кредитах. Преобразуем этот вызов в синхронный, если нужно
+    enough_credits = request.check_credits(user_id, request.connector)  # Это синхронная функция
 
     if enough_credits:
-        # Process the message and generate a response
-        # (This part needs significant changes if originally asynchronous)
+        # Подготовка запроса к API с синхронной отправкой данных
         url = "https://api.insertchatgpt.com/v1/embeds/messages"
-        payload = {'chat_uid': chat_id, 'widget_uid': '7acefd42-643d-4aaa-a013-8a91ff02e593', 'input': message.text, 'disable_stream': 'false', 'role': 'user', 'dynamic_context': '','dynamic_questions': '','dynamic_system_behavior': ''}
+        payload = {'chat_uid': chat_id, 'widget_uid': '7acefd42-643d-4aaa-a013-8a91ff02e593', 'input': message.text, 'disable_stream': 'false', 'role': 'user', 'dynamic_context': '', 'dynamic_questions': '', 'dynamic_system_behavior': ''}
         headers = {}
-        
-        # Use a synchronous method to make HTTP requests, e.g., requests.post
+
+        # Синхронный запрос
         response = requests.post(url, headers=headers, data=payload)
 
         try:
+            # Декодируем ответ и обрабатываем его
             response_text = response.content.decode("utf-8")
             print(response_text)
             response_text = response_text.split('[MESSAGE_UID]')[0].strip()
             response_text = response_text.replace("*", "_", 1).replace("*", "_", -1).replace("_", ")", 1).replace("_", "(", 1)
 
-                # Deduct one credit from the database (adapt to synchronous database call)
-                await request.subtract_credits(user_id, request.connector)  # This function needs to be synchronous
+            # Теперь нужно вызвать синхронную функцию для вычитания кредита
+            request.subtract_credits(user_id, request.connector)  # Синхронная операция
 
-                # Send response (adapt to the synchronous method of your bot framework)
-                await bot.send_message(chat_id=message.chat.id, text=output_text, parse_mode=ParseMode.MARKDOWN, reply_markup=feedback_keyboard)
-            else:
-                print("Error processing API response. Status code:", response.status_code)
-                await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
+            # Отправляем ответ пользователю
+            await bot.send_message(chat_id=message.chat.id, text=response_text, parse_mode=ParseMode.MARKDOWN, reply_markup=keyboard)
+
         except Exception as e:
             print("Error processing API response:", e)
             await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
     else:
-        # Inform the user about insufficient credits
+        # Сообщаем пользователю об отсутствии кредитов
         await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=keyboard)
 
 
