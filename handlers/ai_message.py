@@ -1,5 +1,5 @@
+import aiohttp
 import json
-import requests
 from aiogram import types
 from aiogram.enums import ParseMode
 from aiogram import Bot
@@ -9,15 +9,11 @@ from typing import Dict
 from keyboards.credits import get_keyboard
 from keyboards.feedback import feedback_keyboard
 from aiogram.utils import markdown
-import re
-
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
-from aiogram import types
 
 # Словарь для отслеживания соответствия user_id и chat_id
 user_chat_mapping: Dict[int, str] = {}
 
-async def handle_user_message(message: Message, bot: Bot, request: Request):
+async def handle_user_message(message: types.Message, bot: Bot, request: Request):
     user_id = message.from_user.id
 
     # Вызов синхронной функции для аутентификации и создания chat_id
@@ -30,49 +26,41 @@ async def handle_user_message(message: Message, bot: Bot, request: Request):
     enough_credits = request.check_credits(user_id, request.connector)  # Это синхронная функция
 
     if enough_credits:
-        # Подготовка запроса к API с синхронной отправкой данных
-        url = "https://api.insertchatgpt.com/v1/embeds/messages"
-        payload = {'chat_uid': chat_id, 'widget_uid': '7acefd42-643d-4aaa-a013-8a91ff02e593', 'input': message.text, 'disable_stream': 'false', 'role': 'user', 'dynamic_context': '', 'dynamic_questions': '', 'dynamic_system_behavior': ''}
-        headers = {}
+        # Подготовка запроса к API с асинхронной отправкой данных
+        url = "https://api.insertchat.com/v1/embeds/messages"
+        payload = {
+            'chat_uid': chat_id,
+            'widget_uid': '7acefd42-643d-4aaa-a013-8a91ff02e593',  # Используйте ваш widget_uid
+            'input': message.text,
+            'disable_stream': 'false',
+            'role': 'user',
+            'dynamic_context': '',
+            'dynamic_questions': '',
+            'dynamic_system_behavior': ''
+        }
+        
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
 
-        # Синхронный запрос
-        response = requests.post(url, headers=headers, data=payload)
+        # Асинхронный запрос с aiohttp
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, data=payload, headers=headers) as response:
+                if response.status == 200:
+                    response_text = await response.text()
+                    response_text = response_text.split('[MESSAGE_UID]')[0].strip()
+                    response_text = response_text.replace("*", "_", 1).replace("*", "_", -1).replace("_", ")", 1).replace("_", "(", 1)
 
-        try:
-            # Декодируем ответ и обрабатываем его
-            response_text = response.content.decode("utf-8")
-            print(response_text)
-            response_text = response_text.split('[MESSAGE_UID]')[0].strip()
-            response_text = response_text.replace("*", "_", 1).replace("*", "_", -1).replace("_", ")", 1).replace("_", "(", 1)
+                    # Теперь нужно вызвать синхронную функцию для вычитания кредита
+                    await request.subtract_credits(user_id, request.connector)  # Синхронная операция
 
-            # Теперь нужно вызвать синхронную функцию для вычитания кредита
-            request.subtract_credits(user_id, request.connector)  # Синхронная операция
-
-            # Отправляем ответ пользователю
-            await bot.send_message(chat_id=message.chat.id, text=response_text, parse_mode=ParseMode.MARKDOWN, reply_markup=keyboard)
-
-        except Exception as e:
-            print("Error processing API response:", e)
-            await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
+                    # Отправляем ответ пользователю
+                    await bot.send_message(chat_id=message.chat.id, text=response_text, parse_mode=ParseMode.MARKDOWN, reply_markup=keyboard)
+                else:
+                    await bot.send_message(chat_id=message.chat.id, text="Error processing API response.")
     else:
         # Сообщаем пользователю об отсутствии кредитов
         await bot.send_message(chat_id=message.chat.id, text="You don't have enough credits. Please purchase more.", reply_markup=keyboard)
-
-
-def process_message_text(text):
-    # Проверяем, начинается ли текст с I{ и заканчивается ли на }
-    if text.startswith("I ") and text.endswith("."):
-        # Извлекаем текст между I{ и }
-        inner_text = text[2:-1]
-
-        # Применяем курсив к внутреннему тексту
-        italic_text = markdown.markdown(inner_text, extensions=['italic'])
-
-        # Возвращаем новый текст с курсивом
-        return italic_text
-    else:
-        # Возвращаем оригинальный текст
-        return text
 
 # Обработчик для оценки ответа
 async def process_feedback(callback_query: types.CallbackQuery, bot: Bot):
@@ -85,7 +73,3 @@ async def process_feedback(callback_query: types.CallbackQuery, bot: Bot):
     elif callback_query.data == "dislike":
         # Отправляем уведомление о том, что сообщение передано разработчику для проверки
         await callback_query.answer(text="Your feedback has been forwarded to the developer for review. Thank you for your input! 🙏", show_alert=True)
-
-
-
-        
